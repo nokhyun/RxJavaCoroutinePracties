@@ -1,16 +1,15 @@
 package com.nokhyun.rxpractice
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
+import com.nokhyun.rxpractice.coroutine.CoroutineTest
 import io.reactivex.rxjava3.core.Completable
 import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.core.Single
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.*
 import java.util.concurrent.Callable
 import java.util.concurrent.TimeUnit
 
@@ -18,6 +17,8 @@ class MainActivity : AppCompatActivity() {
     companion object {
         private val TAG = MainActivity::class.java.simpleName
     }
+
+    private val coroutineTest: CoroutineTest by lazy { CoroutineTest() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -35,52 +36,12 @@ class MainActivity : AppCompatActivity() {
 //        test9()
 
         // coroutine
-//        co1()
-//        co2()
-        co3()
+        coroutineTest.start()
+
+        bt_next.setOnClickListener { startActivity(Intent(this@MainActivity, CoroutineTestActivity::class.java)) }
     }
 
-    private fun co1(){
-        Log.d(TAG, "doing someting in main thread")
 
-        GlobalScope.launch {
-            delay(3000)
-            Log.d(TAG, "done someting in Coroutine")
-        }
-
-        Log.d(TAG, "done in main thread")
-    }
-
-    private fun co2(){
-        GlobalScope.launch {
-            launch {
-                Log.d(TAG, "Launch has No return value")
-            }
-
-            val value: Int = async {
-                1 + 2
-            }.await()
-
-            Log.d(TAG, "Async has return value: $value")
-        }
-    }
-
-    private fun co3(){
-        GlobalScope.launch {
-            doSomething()
-            Log.d(TAG, "done something")
-        }
-    }
-
-    // 코루틴 안에서 일반적인 메소드는 호출 할 수 없다. 잠시 실행을 멈추거나 다시 실행될 수 있기 때문.
-    // 코루틴에서 실행할 수 있는 메소드를 만드려면 함수를 정의할 때 suspend를 붙인다.
-    // suspend fun는 안에서 다른 코루틴을 실행할 수 있다.
-    private suspend fun doSomething(){
-        GlobalScope.launch {
-            delay(1000)
-            Log.d(TAG, "do something in a suspend method")
-        }
-    }
 
 
 
